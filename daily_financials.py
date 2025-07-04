@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from src.config import DB_FOLDER, TABLE_NAME, FINANCIAL_TABLE_NAME
 import time
 
-tickers = Fetcher.get_sp500_tickers()
+# tickers = Fetcher.get_sp500_tickers()
 tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', "MMM", "A", "TSLA", "AMD", "PLTR"] 
 loader = Loader()
 loader.init_schema_sp500_financials()
@@ -66,13 +66,16 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 # df = pd.DataFrame(data)
 # Clean up and convert
 print(results)
-df = pd.DataFrame([r for r in results if r is not None])
-print(df)
-print(df.columns)
-# Convert date columns properly if present
-if 'Date' in df.columns:
-    df['Date'] = pd.to_datetime(df['Date'])
-if 'Report_Date' in df.columns:
-    df['Report_Date'] = pd.to_datetime(df['Report_Date'])
+try:
+    df = pd.DataFrame([r for r in results if r is not None])
+    print(df)
+    print(df.columns)
+    # Convert date columns properly if present
+    if 'Date' in df.columns:
+        df['Date'] = pd.to_datetime(df['Date'])
+    if 'Report_Date' in df.columns:
+        df['Report_Date'] = pd.to_datetime(df['Report_Date'])
 
-loader.upsert_financials(df)
+    loader.upsert_financials(df)
+except Exception as e:
+    print(e)

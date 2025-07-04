@@ -9,7 +9,7 @@ import datetime
 if __name__ == "__main__":
     OUTPUT_XLSX = "index_output.xlsx"
     END_DATE = datetime.date.today().strftime("%Y-%m-%d")
-    START_DATE = (datetime.date.today() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+    START_DATE = (datetime.date.today() - datetime.timedelta(days=60)).strftime("%Y-%m-%d")
 
     loader = SparkLoader(DB_PATH)
     builder = IndexBuilderSpark(loader)

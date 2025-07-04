@@ -1,6 +1,7 @@
-pyspark
+pyspark==3.4.3
 duckdb
 pandas
+lxml
 openpyxl
 yfinance
 pyarrow

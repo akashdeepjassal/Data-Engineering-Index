@@ -10,7 +10,7 @@ from datetime import date, timedelta
 def main():
     # 1. Get S&P 500 tickers
     tickers = Fetcher.get_sp500_tickers()
-    tickers=['AAPL', 'MSFT']
+    # tickers=['AAPL', 'MSFT']
     print(f"Fetched {len(tickers)} S&P 500 tickers.")
 
     os.makedirs(DB_FOLDER, exist_ok=True)

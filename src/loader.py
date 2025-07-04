@@ -128,6 +128,18 @@ class Loader:
         return cur.fetchone() is not None
 
     def upsert_financials(self, df: pd.DataFrame):
+        print("DF columns:", df.columns.tolist())
+        df = df.astype({
+        'Date': str,
+        'Report_Date': str,
+        'Ticker': str,
+        'Total_Shares': float,
+        'Total_Shares_Outstanding': float,
+        'Previous_Close': float,
+        'Market_Cap': float,
+        })
+        # Replace NaNs with None so they map to NULL in SQLite
+        df = df.where(pd.notnull(df), None)
         values = df[['Date', 'Report_Date', 'Ticker', 'Total_Shares', 'Total_Shares_Outstanding', 'Previous_Close', 'Market_Cap']].values.tolist()
         query = f"""
             INSERT INTO {self.financials_table_name}
