@@ -8,7 +8,7 @@ from src.config import DB_FOLDER, TABLE_NAME, FINANCIAL_TABLE_NAME
 import time
 
 tickers = Fetcher.get_sp500_tickers()
-# tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', "MMM", "A", "TSLA", "AMD", "PLTR"] 
+tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', "MMM", "A", "TSLA", "AMD", "PLTR"] 
 loader = Loader()
 loader.init_schema_sp500_financials()
 existing_tickers = loader.get_existing_tickers(FINANCIAL_TABLE_NAME)

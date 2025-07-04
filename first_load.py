@@ -10,6 +10,7 @@ from datetime import date, timedelta
 def main():
     # 1. Get S&P 500 tickers
     tickers = Fetcher.get_sp500_tickers()
+    tickers=['AAPL', 'MSFT']
     print(f"Fetched {len(tickers)} S&P 500 tickers.")
 
     os.makedirs(DB_FOLDER, exist_ok=True)
@@ -34,16 +35,16 @@ def main():
         df = Fetcher.download_yahoo_data(missing_tickers, start_date, end_date)
         print("Downloaded new price data.")
         loader.save_prices(df)
-        print("Saved new data to DuckDB.")
+        print("Saved new data to SQLITE.")
     else:
         exit()
         print("All tickers already present. No new download required.")
     
 
-    # 3. Initialize DuckDB and save data
+    # 3. Initialize SQLITE and save data
     
     loader.save_prices(df)
-    print("Saved data to DuckDB.")
+    print("Saved data to SQLITE.")
 
     # 4. Example: Get top 100 by market cap for a date
     index_builder = IndexBuilder()

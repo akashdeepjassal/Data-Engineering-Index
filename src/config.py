@@ -1,8 +1,8 @@
 # src/config.py
-DB_FOLDER = "db"
+DB_FOLDER = "dbs"
 TABLE_NAME="prices"
 FINANCIAL_TABLE_NAME="sp500_financials"
-DB_PATH = "db/index_data.duckdb"
+DB_PATH = "dbs/index_data.sqlite"
 BATCH_SIZE = 25  # Yahoo Finance batch size limit
 YF_PERIOD = "1mo"
 YF_INTERVAL = "1d"

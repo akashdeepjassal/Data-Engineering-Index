@@ -57,5 +57,5 @@ class Fetcher:
         final_df=final_df[['Date', 'Ticker', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']]
         final_df = final_df.drop_duplicates(subset=['Date', 'Ticker'], keep='last')
         final_df['Date'] = pd.to_datetime(final_df['Date']).dt.date
-        final_df.to_csv(f"db/prices_{end_date}.csv", index=False)
+        final_df.to_csv(f"dbs/prices_{end_date}.csv", index=False)
         return final_df

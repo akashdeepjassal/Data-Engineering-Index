@@ -1,0 +1,6 @@
+pyspark
+duckdb
+pandas
+openpyxl
+yfinance
+pyarrow
