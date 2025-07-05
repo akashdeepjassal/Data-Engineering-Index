@@ -8,6 +8,7 @@ Construct and track an **equal-weighted custom index** comprising the top 100 US
 
 ## Table of Contents
 
+- [Instructions for Reviewers](#instructions-for-reviewers)
 - [Project Structure](#project-structure)
 - [Data Sources & Acquisition](#data-sources--acquisition)
 - [Data Storage](#data-storage)
@@ -17,7 +18,7 @@ Construct and track an **equal-weighted custom index** comprising the top 100 US
 - [Excel Output](#excel-output)
 - [Design Decisions & Challenges](#design-decisions--challenges)
 - [Scalability & Maintenance](#scalability--maintenance)
-- [Instructions for Reviewers](#instructions-for-reviewers)
+
 
 ---
 
@@ -95,6 +96,14 @@ See comments in src/index.py and src/exporter.py for additional documentation.
 
 - **S&P 500 tickers:** Scraped from Wikipedia for accuracy and timeliness.
 - **Price and fundamental data:** Pulled via yfinance, batch processed, and saved into DuckDB/SQLite for fast analytics.
+
+---
+
+**Equal Weighted Index Formula**
+
+$$
+\text{Index Return} = \frac{1}{n} \sum_{i=1}^{n} R_i
+$$
 
 ---
 
