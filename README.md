@@ -21,6 +21,22 @@ Construct and track an **equal-weighted custom index** comprising the top 100 US
 
 ---
 
+##### Instructions for Reviewers
+```
+All code is modular, commented, and ready for inspection.
+
+Use Airflow as compared to runnign from scratch.
+The DB files ahve been populated already, please delete dbs flder and then build docker image
+
+To rerun from scratch, use the data loaders to populate the database, then run the index script.
+
+The Excel output is fully self-contained and interpretable.
+
+See comments in src/index.py and src/exporter.py for additional documentation.
+```
+
+---
+
 ## Project Structure
 ```tree
 .
@@ -380,13 +396,3 @@ Architecture easily supports additional index methodologies, attribution analysi
 
 Adapt ETL for streaming updates or intraday refresh with minimal code changes.
 
-##### Instructions for Reviewers
-```
-All code is modular, commented, and ready for inspection.
-
-To rerun from scratch, use the data loaders to populate the database, then run the index script.
-
-The Excel output is fully self-contained and interpretable.
-
-See comments in src/index.py and src/exporter.py for additional documentation.
-```
