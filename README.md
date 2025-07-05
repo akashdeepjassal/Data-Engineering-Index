@@ -22,8 +22,12 @@ Construct and track an **equal-weighted custom index** comprising the top 100 US
 ---
 
 ## Project Structure
-```
+```tree
 .
+├── create_index.py
+├── dags
+│   ├── daily_and_index_dag.py
+│   └── historical_and_financials_dag.py
 ├── daily_financials.py
 ├── daily_load.py
 ├── db
@@ -31,32 +35,26 @@ Construct and track an **equal-weighted custom index** comprising the top 100 US
 │   └── prices_2025-07-04.csv
 ├── dbs
 │   ├── index_data.sqlite
-│   └── prices_2025-07-04.csv
+│   ├── prices_2025-07-04.csv
+│   └── prices_2025-07-05.csv
 ├── Dockerfile
-├── first_load.py
-├── index_output.xlsx
+├── historical_load.py
+├── index_output_2025-07-04.xlsx
+├── index_output_2025-07-05.xlsx
+├── java_opts.txt
 ├── README.md
 ├── requirements.txt
-├── run_spark_index_creation.py
 ├── sqlite-jdbc-3.45.1.0.jar
-├── src
-│   ├── __init__.py
-│   ├── __pycache__
-│   │   ├── __init__.cpython-311.pyc
-│   │   ├── config.cpython-311.pyc
-│   │   ├── exporter.cpython-311.pyc
-│   │   ├── fetcher.cpython-311.pyc
-│   │   ├── index.cpython-311.pyc
-│   │   ├── loader.cpython-311.pyc
-│   │   └── utils.cpython-311.pyc
-│   ├── config.py
-│   ├── exporter.py
-│   ├── fetcher.py
-│   ├── index.py
-│   ├── loader.py
-│   ├── spark_loader.py
-│   └── utils.py
-└── top100mcap.py
+└── src
+    ├── __init__.py
+    ├── __pycache__
+    ├── config.py
+    ├── exporter.py
+    ├── fetcher.py
+    ├── index.py
+    ├── loader.py
+    ├── spark_loader.py
+    └── utils.py
 ```
 
 
@@ -86,15 +84,15 @@ Construct and track an **equal-weighted custom index** comprising the top 100 US
 
 ## Data Storage
 
-- **DuckDB** is used as the primary analytical storage engine.
+- **SQLITE3** is used as the primary analytical storage engine.
   - Fast, in-memory, SQL-compliant, no external dependencies.
+  - Note:
+    DuckDB was considered for analytics, but has limited compatibility with PySpark for direct integration and parallel processing.
+    SQLite was chosen for its universal support, reliability in containerized environments, and seamless integration with both pandas and Spark workflows (using JDBC or CSV intermediates).
+    SQLite also makes the solution portable, easy to inspect, and compatible with most data engineering tools.
 - **Tables:**
   - `Prices`: Daily prices (`Date`, `Ticker`, `Open`, `High`, `Low`, `Close`, `Adj_Close`, `Volume`)
   - `sp500_financials`: Fundamental data (`Date`, `Report_Date`, `Ticker`, `Total_Shares_Outstanding`, etc.)
-
-- **Why DuckDB?**
-  - Blazing fast for analytical queries on local datasets.
-  - Integrates easily with PySpark and pandas.
 
 ---
 
@@ -133,6 +131,10 @@ Construct and track an **equal-weighted custom index** comprising the top 100 US
 
 ## How to Run
 
+```
+Note: reccomd to use docker as the standalone solution may not work on some OS and is tailor made for MAC and may fail with some mac os versions
+```
+
 ### 1. Setup Environment
 
 #### Run Locally
@@ -151,6 +153,24 @@ export PYSPARK_PYTHON=python3
 export PYSPARK_DRIVER_PYTHON=python3
 ```
 
+##### Test Spark Installation
+
+```bash
+pip install findspark jupyter
+```
+```python
+import findspark
+findspark.init("/opt/homebrew/Cellar/apache-spark/3.5.0/libexec")
+
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("test").getOrCreate()
+
+data = [("xyz","400"),("abc","450"),("qwe","678")]
+df = spark.createDataFrame(data)
+df.show()
+
+```
+
 ##### Install dependencies:
 
 ```bash
@@ -159,13 +179,6 @@ python3 first_load.py &&
 python3 daily_financials.py &&
 python3 daily_load.py &&
 python3 run_spark_index_creation.py
-```
-
-#### Run with Docker
-
-```bash
-docker build -t spark-py-duckdb .
-docker run --rm -v "$PWD":/app spark-py-duckdb:latest
 ```
 
 ### 2. Prepare Data
@@ -207,6 +220,38 @@ Total composition changes, best/worst days, aggregate return, and other insights
 ```
 
 No charts or visualizations are included, as per requirements.
+
+#### Easier Solution Run with Docker 
+
+```bash
+docker build -t spark-py-duckdb-airflow .
+docker run -p 8080:8080 spark-py-duckdb-airflow
+# docker run --rm -v "$PWD":/app spark-py-duckdb:latest
+```
+
+##### Access Airflow UI:
+
+```
+Go to http://localhost:8080 in your browser.
+```
+##### Login
+
+```
+Username: admin
+Password: admin
+```
+
+##### Trigger a DAG:
+
+```
+Two DAGs are available under the Airflow UI:
+
+historical_and_financials — runs historical_load.py then daily_financials.py
+
+daily_and_index — runs daily_load.py, daily_financials.py, then create_index.py
+
+Trigger as needed, monitor logs and task status in real time.
+```
 
 #### Design Decisions & Challenges
 
@@ -322,7 +367,7 @@ Data fetching and ETL separated for easier orchestration (e.g., with Airflow or 
 
 ##### Scaling:
 
-Spark and DuckDB support scaling to larger universes, more metrics, or more granular data (minute, not just daily).
+Spark supports scaling to larger universes, more metrics, or more granular data (minute, not just daily).
 
 To add more data sources, implement additional fetchers/loaders and unify via a staging layer.
 
