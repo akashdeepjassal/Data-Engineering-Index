@@ -23,8 +23,8 @@ ENV PYSPARK_PYTHON=python3
 USER 185
 
 # Default command to run all ETL steps in order
-CMD python3 first_load.py && \
+CMD python3 historical_load.py && \
     python3 daily_financials.py && \
     python3 daily_load.py && \
-    python3 run_spark_index_creation.py
+    python3 create_index.py
 

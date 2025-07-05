@@ -7,9 +7,9 @@ from src.config import DB_PATH, TABLE_NAME, FINANCIAL_TABLE_NAME
 import datetime
 
 if __name__ == "__main__":
-    OUTPUT_XLSX = "index_output.xlsx"
     END_DATE = datetime.date.today().strftime("%Y-%m-%d")
     START_DATE = (datetime.date.today() - datetime.timedelta(days=60)).strftime("%Y-%m-%d")
+    OUTPUT_XLSX = f"index_output_{END_DATE}.xlsx"
 
     loader = SparkLoader(DB_PATH)
     builder = IndexBuilderSpark(loader)
